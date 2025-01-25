@@ -1,7 +1,7 @@
 import { app, shell, BrowserWindow, ipcMain, session } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import icon from '../../resources/icon.png'
 import sequelize from '../../backend/database/sqlite'
 
 // Instanciando banco de dados local
@@ -20,6 +20,7 @@ function createWindow() {
     width: 860,
     height: 720,
     show: false,
+    icon: icon,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {

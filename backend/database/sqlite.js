@@ -1,9 +1,12 @@
-const { Sequelize } = require('sequelize');
+import { app } from 'electron';
 const path = require('path')
+const { Sequelize } = require('sequelize');
+
+const dbPath = path.join(app.getPath('userData'), 'db.sqlite');
 
 const sequelize = new Sequelize({
   dialect: 'sqlite', // Dialeto a ser usado [pode ser alterado conforme necessidade]
-  storage: path.join(__dirname, '../database.sqlite'), // Caminho para salvar o arquivo sqlite
+  storage: dbPath, // Caminho para salvar o arquivo sqlite
   logging: false, // Desativar logs
 });
 
