@@ -1,7 +1,18 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, session } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import sequelize from '../../backend/database/sqlite'
+
+// Instanciando banco de dados local
+(async () => {
+  try {
+    await sequelize.authenticate()
+    console.log('Conexão com DB realizada com sucesso!');
+  } catch (error) {
+    console.log('Houve um erro em realizar a conexão com DB, verifique o diretório ./database e tente novamente', error);
+  }
+})();
 
 function createWindow() {
   // Create the browser window.
@@ -50,9 +61,23 @@ app.whenReady().then(() => {
   })
 
   // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+  // ipcMain.on('ping', () => console.log('pong'))
 
   createWindow()
+
+  // Lidando com erros de CSP
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': [
+          "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; img-src 'self' data:; font-src 'self' https://cdn.jsdelivr.net; object-src 'none';"
+        ]
+      }
+    });
+  });
+
+
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
