@@ -1,0 +1,9 @@
+.hoverEffect {
+  transition: transform 0.3s ease;
+  /* Transição suave */
+}
+
+.hoverEffect:hover {
+  transform: scale(1.05);
+  /* Aumenta o elemento em 5% */
+}

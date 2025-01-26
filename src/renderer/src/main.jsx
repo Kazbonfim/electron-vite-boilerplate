@@ -1,14 +1,11 @@
-import { createRoot } from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { StrictMode, Suspense } from 'react'
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
+import { createRoot } from 'react-dom/client';
+import { HashRouter, Routes, Route } from 'react-router-dom'; // Substituído createBrowserRouter por HashRouter
+import { StrictMode, Suspense } from 'react';
+import React from 'react';
+import App from './App';
 
-// Efeito de suspense para carregamento das páginas, só aplicar como embaixo:
-// const Home = React.lazy(() => '/');
-const Home = React.lazy(() => './pages/Home.jsx');
-
+// Efeito de suspense para carregamento das páginas
+const Home = React.lazy(() => import('./pages/Home.jsx')); // Corrigido o caminho e usando import()
 
 // Componente de Loading
 const Loading = () => (
@@ -20,35 +17,39 @@ const Loading = () => (
   </div>
 );
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-    children: [
-      {
-        path: "/",
-        element: (
-          <Suspense fallback={<Loading />}>
-            <Home />
-          </Suspense>
-        )
-      },
-      // Exemplo de uso, para definir efeito de carregamento + páginas das rotas
-      // {
-      //   path: "/",
-      //   element: (
-      //     <Suspense fallback={<Loading />}>
-      //       <Home />
-      //     </Suspense>
-      //   )
-      // },
-    ]
-  }
-]);
+// Configuração das rotas com HashRouter
+function RouterConfig() {
+  return (
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<App />}>
+          <Route
+            index // Rota padrão (equivalente a path="/")
+            element={
+              <Suspense fallback={<Loading />}>
+                <Home />
+              </Suspense>
+            }
+          />
+          {/* Exemplo de outras rotas */}
+          {/* <Route
+            path="/about"
+            element={
+              <Suspense fallback={<Loading />}>
+                <About />
+              </Suspense>
+            }
+          /> */}
+        </Route>
+      </Routes>
+    </HashRouter>
+  );
+}
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+// Renderização da aplicação
+const root = createRoot(document.getElementById('root'));
+root.render(
   <StrictMode>
-    {/* <App /> */}
-    <RouterProvider router={router} />
+    <RouterConfig />
   </StrictMode>
-)
+);
